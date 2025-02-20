@@ -41,8 +41,8 @@ function parseFEN(FEN) {
 
 	let n = 0;
 
-	rows.forEach((row, d) => {
-		row.split("").forEach((c, d) => {
+	rows.forEach((row, y) => {
+		row.split("").forEach((c, x) => {
 			const skip = parseInt(c) - 1;
 
 			if (skip) {
@@ -51,8 +51,10 @@ function parseFEN(FEN) {
 				const cell = cells.children[n];
 
 				const piece = document.createElement("div");
+				piece.dataset.rank = getPiece(c);
 				piece.classList.add("piece");
-				piece.style.backgroundImage = `url('img/${getPiece(c)}.svg')`;
+
+				piece.style.backgroundImage = `url('assets/pieces/${piece.dataset.rank}.svg')`;
 
 				cell.appendChild(piece);
 			}
