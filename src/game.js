@@ -1,33 +1,52 @@
-let moving = null;
+let move = {piece: null, copy: null};
+let clientX, clientY;
+
+const isMoving = () => Object.values(move).every(value => value !== null);
+
+function updateMoving() {
+	move.copy.style.left = `${clientX}px`;
+	move.copy.style.top = `${clientY}px`;
+}
 
 // start move
 
 document.addEventListener("mousedown", ({ target, button }) => {
 	if (button === 0 && target.classList.contains("piece")) {
-		moving = target.cloneNode();
-		moving.classList.add("moving");
+		move.piece = target;
+		
+		// create copy
+		
+		move.copy = target.cloneNode(true);
+		move.copy.style.width = move.piece.offsetWidth + "px";
+		move.copy.style.height = move.piece.offsetHeight + "px";
+		move.copy.classList.add("moving");
+		
+		board.appendChild(move.copy);
+		updateMoving();
 
-		moving.style.width = `${target.offsetWidth}px`;
-		moving.style.height = `${target.offsetHeight}px`;
+		target.style.opacity = 0.5;
 	}
 });
 
-// move piece
+// drag piece
 
-document.addEventListener("mousemove", ({ clientX, clientY }) => {
-	if (moving) {
-		moving.style.left = `${clientX}px`;
-		moving.style.top = `${clientY}px`;
+document.addEventListener("mousemove", ({ clientX: x, clientY: y }) => {
+	clientX = x; clientY = y;
 
-		document.body.appendChild(moving);
+	if (isMoving()) updateMoving();
+});
+
+// place piece
+
+document.addEventListener("mouseup", () => {
+	if (isMoving()) {
+		move.piece.style.opacity = 1;
+		move.copy.remove();
+
+		Object.keys(move).forEach(key => move[key] = null);
 	}
 });
 
-// stop move
+// prevent
 
-document.addEventListener("mouseup", ({ clientX, clientY }) => {
-	if (!moving) return;
-
-	moving.remove();
-	moving = null;
-});
+document.addEventListener("dragstart", event => event.preventDefault());

@@ -3,14 +3,16 @@
 	margin: 0;
 
 	box-sizing: border-box;
-	--black: hsl(29, 31%, 55%);
-	--white: hsl(38, 60%, 83%);
+	--black: hsl(29, 31%, 54%);
+	--white: hsl(39, 59%, 82%);
 }
 
 body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+	background-color: hsl(0, 0%, 10%);
 
 	min-height: 100vh;
 }
@@ -34,7 +36,12 @@ body {
 }
 
 .cell {
+	&:hover {
+		box-shadow: 0 0 0 0.5vmin rgba(255, 255, 255, 0.5) inset;
+		transition: 50ms ease-out;
+	}
 
+	transition: 250ms ease-in;
 }
 
 .black { background-color: var(--black); }
@@ -47,10 +54,12 @@ body {
 	height: 100%;
 
 	background-size: cover;
-	cursor: pointer;
+	cursor: grab;
 }
 
 .moving {
 	position: fixed;
 	translate: -50% -50%;
+
+	cursor: grabbing;
 }
