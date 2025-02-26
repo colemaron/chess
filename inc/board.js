@@ -21,15 +21,11 @@ class Board {
 		this.element = element;
 
 		this.fen = fen;
-		this.cells = fen.toArray();
-	}
-
-	set fen(fen) {
-		this.cells = fen.toArray();
+		this.cells = fen.array;
 	}
 
 	init() {
-		this.cells.forEach((data, index) => {
+		this.fen.array.forEach((data, index) => {
 			const white = (index + Math.floor(index / 8)) % 2 === 0;
 
 			// create cell
