@@ -1,65 +1,55 @@
-* {
-	padding: 0;
-	margin: 0;
-
-	box-sizing: border-box;
-	--black: hsl(29, 31%, 54%);
-	--white: hsl(39, 59%, 82%);
-}
-
-body {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	background-color: hsl(0, 0%, 10%);
-
-	min-height: 100vh;
-}
-
-/* board and cells */
-
 #board {
-	width: 100vmin;
-	height: 100vmin;
-
-	padding: 1rem;
-}
-
-#cells {
 	display: grid;
 	grid-template-columns: repeat(8, 1fr);
 	grid-template-rows: repeat(8, 1fr);
 
-	width: 100%;
-	height: 100%;
+	padding: 1rem;
+
+	width: 100vmin;
+	height: 100vmin;
 }
 
 .cell {
-	&:hover {
-		box-shadow: 0 0 0 0.5vmin rgba(255, 255, 255, 0.5) inset;
-		transition: 50ms ease-out;
+	&.white {
+		background-color: var(--white);
+		color: var(--black)
 	}
 
-	transition: 250ms ease-in;
+	&.black {
+		background-color: var(--black);
+		color: var(--white);
+	}
 }
 
-.black { background-color: var(--black); }
-.white { background-color: var(--white); }
+.cell-text {
+	height: 0;
+	width: 0;
 
-/* pieces */
+	position: relative;
+	top: 0.5vmin;
+	left: 0.5vmin;
+
+	font-size: 1.5vmin;
+	font-weight: 500;
+}
 
 .piece {
 	width: 100%;
 	height: 100%;
 
 	background-size: cover;
-	cursor: grab;
-}
 
-.moving {
-	position: fixed;
-	translate: -50% -50%;
+	&.w-pawn   { background-image: url("../assets/pieces/w-pawn.svg");   }
+	&.w-rook   { background-image: url("../assets/pieces/w-rook.svg");   }
+	&.w-knight { background-image: url("../assets/pieces/w-knight.svg"); }
+	&.w-bishop { background-image: url("../assets/pieces/w-bishop.svg"); }
+	&.w-queen  { background-image: url("../assets/pieces/w-queen.svg");  }
+	&.w-king   { background-image: url("../assets/pieces/w-king.svg");   }
 
-	cursor: grabbing;
+	&.b-pawn   { background-image: url("../assets/pieces/b-pawn.svg");   }
+	&.b-rook   { background-image: url("../assets/pieces/b-rook.svg");   }
+	&.b-knight { background-image: url("../assets/pieces/b-knight.svg"); }
+	&.b-bishop { background-image: url("../assets/pieces/b-bishop.svg"); }
+	&.b-queen  { background-image: url("../assets/pieces/b-queen.svg");  }
+	&.b-king   { background-image: url("../assets/pieces/b-king.svg");   }
 }
