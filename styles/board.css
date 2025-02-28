@@ -19,6 +19,10 @@
 		background-color: var(--black);
 		color: var(--white);
 	}
+
+	&.highlighted {
+		background-image: radial-gradient(circle, var(--open) 0%, var(--open) 50%, transparent 55%);
+	}
 }
 
 .cell-text {
@@ -29,6 +33,8 @@
 	top: 0.5vmin;
 	left: 0.5vmin;
 
+	white-space: nowrap;
+
 	font-size: 2vmin;
 	font-weight: 500;
 }
@@ -38,18 +44,20 @@
 	height: 100%;
 
 	background-size: cover;
-
-	&.w-pawn   { background-image: url("../assets/pieces/w-pawn.svg");   }
-	&.w-rook   { background-image: url("../assets/pieces/w-rook.svg");   }
-	&.w-knight { background-image: url("../assets/pieces/w-knight.svg"); }
-	&.w-bishop { background-image: url("../assets/pieces/w-bishop.svg"); }
-	&.w-queen  { background-image: url("../assets/pieces/w-queen.svg");  }
-	&.w-king   { background-image: url("../assets/pieces/w-king.svg");   }
-
-	&.b-pawn   { background-image: url("../assets/pieces/b-pawn.svg");   }
-	&.b-rook   { background-image: url("../assets/pieces/b-rook.svg");   }
-	&.b-knight { background-image: url("../assets/pieces/b-knight.svg"); }
-	&.b-bishop { background-image: url("../assets/pieces/b-bishop.svg"); }
-	&.b-queen  { background-image: url("../assets/pieces/b-queen.svg");  }
-	&.b-king   { background-image: url("../assets/pieces/b-king.svg");   }
 }
+
+/* piece icons */
+
+.p { background-image: url("../assets/white/p.svg"); }
+.r { background-image: url("../assets/white/r.svg"); }
+.n { background-image: url("../assets/white/n.svg"); }
+.b { background-image: url("../assets/white/b.svg"); }
+.q { background-image: url("../assets/white/q.svg"); }
+.k { background-image: url("../assets/white/k.svg"); }
+
+.P { background-image: url("../assets/black/p.svg"); }
+.R { background-image: url("../assets/black/r.svg"); }
+.N { background-image: url("../assets/black/n.svg"); }
+.B { background-image: url("../assets/black/b.svg"); }
+.Q { background-image: url("../assets/black/q.svg"); }
+.K { background-image: url("../assets/black/k.svg"); }

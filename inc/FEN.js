@@ -7,24 +7,26 @@ class FEN {
 		this.string = fen || FEN.default;
 	}
 
-	// get string without "/"
-
-	get plain() { return this.string.replace(/\//g, ""); }
-
 	// generate array from string
 
 	get array() {
-		const array = [];
+		const cells = [];
 	
-		for (const c of this.plain) {
-			if (c.charCodeAt(0) >= 48 && c.charCodeAt(0) <= 56) {
-				array.push(...Array(parseInt(c)).fill(null))
-			} else {
-				array.push(c);
-			}
-		}
-	
-		return array;
+		this.string.split("/").forEach((string, y) => {
+			const row = [];
+
+			string.split("").forEach((c, x) => {
+				if (c.charCodeAt(0) >= 48 && c.charCodeAt(0) <= 56) {
+					row.push(...Array(parseInt(c)).fill(null));
+				} else {
+					row.push(c);
+				}
+			})
+
+			cells.push(row);
+		})
+
+		return cells;
 	}
 
 	// convert array to fen
