@@ -1,10 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 :root {
-	--white: hsl(200, 20%, 90%);
-	--black: hsl(200, 20%, 30%);
+	--white: hsl(100, 20%, 90%);
+	--black: hsl(100, 20%, 30%);
 
-	--open: rgba(100, 200, 255, 0.5);
+	--selected: rgba(50, 200, 255, 0.5);
+	--enemy: rgba(255, 100, 100, 0.5);
+	--open: rgba(50, 255, 75, 0.5);
 }
 
 * {

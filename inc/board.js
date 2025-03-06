@@ -31,6 +31,7 @@ class Board {
 					const pieceElement = document.createElement("div");
 					pieceElement.classList.add("piece", piece);
 					pieceElement.dataset.index = y * 8 + x;
+					pieceElement.dataset.color = piece === piece.toLowerCase() ? "w" : "b";
 
 					cellElement.appendChild(pieceElement);
 				}

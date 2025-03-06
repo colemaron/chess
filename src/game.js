@@ -4,22 +4,16 @@ const boardElement = document.getElementById("board");
 
 // cell functions
 
+function getCell(x, y) {
+	return boardElement.children[coordsToIndex(x, y)];
+}
+
 function indexToCoords(index) {
 	return [index % 8, Math.floor(index / 8)];
 }
 
 function coordsToIndex(x, y) {
 	return y * 8 + x;
-}
-
-// highlight cell
-
-function highlightCell(cell) {
-	cell.classList.add("highlighted");
-}
-
-function unhighlightCell(cell) {
-	cell.classList.remove("highlighted");
 }
 
 // get moves
@@ -33,7 +27,11 @@ const moveData = {
 	k: [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]],
 };
 
-function getMovesForRank(piece) {
+function inBounds(x, y) {
+	return x >= 0 && x < 8 && y >= 0 && y < 8;
+}
+
+function getMoves(piece) {
 	const [x, y] = indexToCoords(piece.dataset.index);
 
 	const rank = piece.classList[1];
@@ -43,40 +41,115 @@ function getMovesForRank(piece) {
 	const moves = [];
 
 	for (const [dx, dy] of moveData[rl]) {
-		if (rl === "p") {
-			if (y === 1 || y === 6) {
-				moves.push([x, y + dy * color * 2]);
-			}
+		// full board pieces
 
-			moves.push([x, y + dy * color]);
-		} else if (["b", "q", "r"].includes(rl)) {
+		if (["r", "q", "b"].includes(rl)) {
 			for (let i = 1; i < 8; i++) {
-				moves.push([x + dx * i, y + dy * i]);
+				const [mx, my] = [x + dx * i, y + dy * i];
+
+				if (!inBounds(mx, my)) continue;
+
+				const mCell = getCell(mx, my);
+				const mPiece = getPiece(mCell);
+
+				// stop iterating at piece but add if enemy
+
+				if (mPiece) {
+					if (!sameTeam(piece, mPiece)) moves.push([mx, my]);
+					
+					break;
+				}
+
+				moves.push([mx, my]);
 			}
 		} else {
-			moves.push([x + dx, y + dy]);
+			let [mx, my] = [x + dx, y + dy];
+
+			if (!inBounds(mx, my)) continue;
+
+			let mCell = getCell(mx, my);
+			let mPiece = getPiece(mCell);
+
+			// stop if same team piece
+
+			if (mPiece && sameTeam(piece, mPiece)) continue;
+
+			// pawn movement
+
+			if (rl === "p") {
+				[mx, my] = [mx, y + dy * color];
+
+				mCell = getCell(mx, y + dy * color);
+				mPiece = getPiece(mCell);
+
+				// stop if new same piece
+
+				if (mPiece && sameTeam(piece, mPiece)) continue;
+
+				moves.push([mx, my]);
+
+				// double first move
+				
+				if (y === 1 && color === 1 || y === 6 && color === -1) {
+					moves.push([mx, my + color]);
+				};
+
+				// check for diagonal enemy
+
+				for (const d of [-1, 1]) {
+					[mx, my] = [x + d, my];
+
+					mCell = getCell(mx, my);
+					mPiece = getPiece(mCell);
+
+					if (mPiece && !sameTeam(piece, mPiece)) {
+						moves.push([mx, my]);
+					}
+				}
+			} else {
+				// push basic data move
+
+				moves.push([mx, my]);
+			}
 		}
 	}
 
-	return moves.filter(([x, y]) => x >= 0 && x < 8 && y >= 0 && y < 8);
+	return moves;
+}
+
+// check functions
+
+function getPiece(cell) {
+	return cell.querySelector(".piece");
+}
+
+function sameTeam(p1, p2) {
+	return p1.dataset.color === p2.dataset.color;
 }
 
 // piece moving
 
 document.addEventListener("mousedown", ({ target }) => {
-	boardElement.querySelectorAll(".highlighted").forEach(unhighlightCell);
+	boardElement.querySelectorAll(".highlighted").forEach(element => element.classList.remove("highlighted"));
+	boardElement.querySelectorAll(".selected").forEach(element => element.classList.remove("selected"));
+	boardElement.querySelectorAll(".enemy").forEach(element => element.classList.remove("enemy"));
 
 	if (target.classList.contains("piece")) {
-		const moves = getMovesForRank(target);
+		const piece = target;
+		const moves = getMoves(piece);
+
+		const parent = target.parentNode;
+		parent.classList.add("selected");
 
 		for (const [x, y] of moves) {
-			highlightCell(boardElement.children[coordsToIndex(x, y)]);
+			const mCell = getCell(x, y);
+			const mPiece = getPiece(mCell);
+
+			if (mPiece && !sameTeam(piece, mPiece)) {
+				mCell.classList.add("enemy");
+			} else {
+				mCell.classList.add("highlighted");
+			}
 		}
-
-		console.log(moves);
-	}
-
-	if (target.classList.contains("cell")) {
-		
 	}
 });
