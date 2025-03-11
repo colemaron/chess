@@ -1,8 +1,12 @@
-import { Board } from "../inc/board.js";
+//import { Board } from "../inc/board.js";
 
 const boardElement = document.getElementById("board");
 
 // cell functions
+
+function getCellFromChild(child) {
+	return Array.from(boardElement.children).indexOf(child);
+}
 
 function getCell(x, y) {
 	return boardElement.children[coordsToIndex(x, y)];
@@ -62,8 +66,36 @@ function getMoves(piece) {
 
 				moves.push([mx, my]);
 			}
+		} else if (rl === "p") {
+			let [mx, my] = [x, y + dy * color];
+
+			let mCell = getCell(mx, y + dy * color);
+			let mPiece = getPiece(mCell);
+
+			// add first if no piece
+
+			if (!mPiece) moves.push([mx, my]);
+
+			// double first move
+			
+			if (y === 1 && color === 1 || y === 6 && color === -1) {
+				if (!mPiece) moves.push([mx, my + color]);
+			};
+
+			// check for diagonal enemy
+
+			for (const d of [-1, 1]) {
+				[mx, my] = [x + d, y + dy * color];
+
+				mCell = getCell(mx, my);
+				mPiece = getPiece(mCell);
+
+				if (mPiece && !sameTeam(piece, mPiece)) {
+					moves.push([mx, my]);
+				}
+			}
 		} else {
-			let [mx, my] = [x + dx, y + dy];
+			const [mx, my] = [x + dx, y + dy];
 
 			if (!inBounds(mx, my)) continue;
 
@@ -74,43 +106,7 @@ function getMoves(piece) {
 
 			if (mPiece && sameTeam(piece, mPiece)) continue;
 
-			// pawn movement
-
-			if (rl === "p") {
-				[mx, my] = [mx, y + dy * color];
-
-				mCell = getCell(mx, y + dy * color);
-				mPiece = getPiece(mCell);
-
-				// stop if new same piece
-
-				if (mPiece && sameTeam(piece, mPiece)) continue;
-
-				moves.push([mx, my]);
-
-				// double first move
-				
-				if (y === 1 && color === 1 || y === 6 && color === -1) {
-					moves.push([mx, my + color]);
-				};
-
-				// check for diagonal enemy
-
-				for (const d of [-1, 1]) {
-					[mx, my] = [x + d, my];
-
-					mCell = getCell(mx, my);
-					mPiece = getPiece(mCell);
-
-					if (mPiece && !sameTeam(piece, mPiece)) {
-						moves.push([mx, my]);
-					}
-				}
-			} else {
-				// push basic data move
-
-				moves.push([mx, my]);
-			}
+			moves.push([mx, my]);
 		}
 	}
 
@@ -127,19 +123,62 @@ function sameTeam(p1, p2) {
 	return p1.dataset.color === p2.dataset.color;
 }
 
-// piece moving
+// move start
 
-document.addEventListener("mousedown", ({ target }) => {
+let move = {turn: "w", piece: null, clone: null, start: [], moves: []};
+
+function removeHighlights() {
 	boardElement.querySelectorAll(".highlighted").forEach(element => element.classList.remove("highlighted"));
 	boardElement.querySelectorAll(".selected").forEach(element => element.classList.remove("selected"));
 	boardElement.querySelectorAll(".enemy").forEach(element => element.classList.remove("enemy"));
+}
+
+document.addEventListener("mousedown", ({ target, clientX, clientY }) => {
+	// reset previous
+
+	removeHighlights();
+
+	// check if its a piece
 
 	if (target.classList.contains("piece")) {
 		const piece = target;
 		const moves = getMoves(piece);
 
+		// return if not correct colored move
+
+		if (move.turn !== piece.dataset.color) {
+			console.log(`not ${move.turn}'s turn`);
+
+			return;
+		};
+
+		// style cell
+
 		const parent = target.parentNode;
 		parent.classList.add("selected");
+
+		// create move clone
+
+		const clone = piece.cloneNode(true);
+		clone.classList.add("moving");
+		boardElement.appendChild(clone);
+
+		clone.style.left = clientX + "px";
+		clone.style.top = clientY + "px";
+
+		clone.style.width = piece.offsetWidth + "px";
+		clone.style.height = piece.offsetHeight + "px";
+
+		piece.style.opacity = 0.25;
+
+		// set move data
+
+		move.start = indexToCoords(piece.dataset.index);
+		move.piece = piece;
+		move.clone = clone;
+		move.moves = moves;
+
+		// highlight available cells
 
 		for (const [x, y] of moves) {
 			const mCell = getCell(x, y);
@@ -149,6 +188,56 @@ document.addEventListener("mousedown", ({ target }) => {
 				mCell.classList.add("enemy");
 			} else {
 				mCell.classList.add("highlighted");
+			}
+		}
+	}
+});
+
+// move drag
+
+document.addEventListener("mousemove", ({ clientX, clientY }) => {
+	if (move.piece && move.clone) {
+		move.clone.style.left = clientX + "px";
+		move.clone.style.top = clientY + "px";
+	}
+});
+
+// move place
+
+document.addEventListener("mouseup", ({ target }) => {
+	if (move.piece && move.clone) {
+		const cell = target.closest(".cell");
+		const piece = getPiece(cell);
+
+		if (cell) {
+			const index = getCellFromChild(cell);
+			const [x, y] = indexToCoords(index);
+
+			// reset visuals
+
+			move.piece.style.opacity = 1;
+			move.clone.remove();
+			removeHighlights();
+
+			// verify move
+
+			if (move.moves.some(([mx, my]) => mx === x && my === y)) {
+				if (piece) piece.remove();
+
+				cell.appendChild(move.piece);
+				move.piece.dataset.index = index;
+
+				// swap turn and reset data
+
+				move = {
+					turn: move.turn === "w" ? "b" : "w",
+					piece: null,
+					clone: null,
+					start: [],
+					moves: []
+				};
+			} else {
+				// console.log("invalid move");
 			}
 		}
 	}

@@ -39,9 +39,9 @@ class Board {
 		})
 	}
 
-	move(piece, index) {
+	// move(piece, index) {
 		
-	}
+	// }
 }
 
 export { Board };
