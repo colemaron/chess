@@ -3,6 +3,7 @@
 	grid-template-columns: repeat(8, 1fr);
 	grid-template-rows: repeat(8, 1fr);
 
+	overflow: hidden;
 	padding: 1rem;
 
 	width: 100vmin;

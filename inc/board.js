@@ -39,6 +39,15 @@ class Board {
 		})
 	}
 
+	reset() {
+		this.fen = this.fen;
+		this.cells = this.fen.array;
+
+		this.element.innerHTML = "";
+
+		this.init();
+	}
+
 	// move(piece, index) {
 		
 	// }

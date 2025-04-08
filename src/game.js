@@ -144,10 +144,10 @@ document.addEventListener("mousedown", ({ target, clientX, clientY }) => {
 		const piece = target;
 		const moves = getMoves(piece);
 
-		// return if not correct colored move
+		// return if not correct move
 
 		if (move.turn !== piece.dataset.color) {
-			console.log(`not ${move.turn}'s turn`);
+			console.log(`its ${move.turn}'s turn`);
 
 			return;
 		};
@@ -204,6 +204,21 @@ document.addEventListener("mousemove", ({ clientX, clientY }) => {
 
 // move place
 
+const info = document.getElementById("info");
+const turn = document.getElementById("turn");
+
+const alpha = "abcdefgh".split("");
+const ranks = {
+	p: "Pawn",
+	r: "Rook",
+	n: "Knight",
+	b: "Bishop",
+	q: "Queen",
+	k: "King"
+}
+
+let moveCount = 0;
+
 document.addEventListener("mouseup", ({ target }) => {
 	if (move.piece && move.clone) {
 		const cell = target.closest(".cell");
@@ -227,6 +242,29 @@ document.addEventListener("mouseup", ({ target }) => {
 				cell.appendChild(move.piece);
 				move.piece.dataset.index = index;
 
+				// update turns
+
+				moveCount++;
+
+				const name = move.turn === "w" ? "Black" : "White";
+				turn.innerHTML = `${name}'s turn<p>Move: ${moveCount++}</p>`;
+
+				const display = document.createElement("p");
+				display.classList.add("move", name.toLowerCase());
+
+				const rank = ranks[move.piece.classList[1].toLowerCase()];
+				const start = `${alpha[move.start[0]]}${8 - move.start[1]}`
+				const end = `${alpha[x]}${8 - y}`
+
+				display.textContent = `${rank}: ${start} → ${end} ${piece ? "(capture)" : ""}`;
+
+				moves.appendChild(display);
+				moves.scrollTo(0, moves.scrollHeight);
+
+				const color = document.createElement("div");
+				color.style.backgroundColor = move.turn === "w" ? "white" : "black";
+				display.appendChild(color);
+
 				// swap turn and reset data
 
 				move = {
@@ -241,4 +279,25 @@ document.addEventListener("mouseup", ({ target }) => {
 			}
 		}
 	}
+});
+
+// new game
+
+const newGame = document.getElementById("new-game");
+
+newGame.addEventListener("click", () => {
+	move = {
+		turn: "w",
+		piece: null,
+		clone: null,
+		start: [],
+		moves: []
+	};
+
+	moves.innerHTML = "";
+
+	moveCount = 0;
+
+	const name = move.turn === "w" ? "White" : "Black";
+	turn.innerHTML = `${name}'s turn<p>Move: ${moveCount++}</p>`;
 });
