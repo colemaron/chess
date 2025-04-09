@@ -21,9 +21,9 @@
 		color: var(--white);
 	}
 	
-	&.highlighted { background-image: radial-gradient(circle, var(--open)     0%,     var(--open) 50%, transparent 51%); }
-	&.selected    { background-image: radial-gradient(circle, var(--selected) 0%, var(--selected) 50%, transparent 51%); }
-	&.enemy       { background-image: radial-gradient(circle, var(--enemy)    0%,    var(--enemy) 50%, transparent 51%); }
+	&.highlighted { background-image: radial-gradient(circle, var(--open)     0%,     var(--open) 45%, transparent 50%); }
+	&.selected    { background-image: radial-gradient(circle, var(--selected) 0%, var(--selected) 45%, transparent 50%); }
+	&.enemy       { background-image: radial-gradient(circle, var(--enemy)    0%,    var(--enemy) 45%, transparent 50%); }
 }
 
 .cell-text {

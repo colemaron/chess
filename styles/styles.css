@@ -80,5 +80,20 @@ body {
 	height: 4rem;
 
 	cursor: pointer;
+	font-size: 1rem;
 	font-family: "Poppins", sans-serif;
+
+	&:hover {
+		box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
+		background-color: white;
+		color: black;
+	}
+
+	&:active {
+		box-shadow: 0 0 0 2px black;
+
+		transition: 25ms ease-out;
+	}
+
+	transition: 100ms;
 }

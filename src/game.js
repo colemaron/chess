@@ -76,10 +76,15 @@ function getMoves(piece) {
 
 			if (!mPiece) moves.push([mx, my]);
 
-			// double first move
+			// double first move, avoid enemy
 			
 			if (y === 1 && color === 1 || y === 6 && color === -1) {
-				if (!mPiece) moves.push([mx, my + color]);
+				if (!mPiece) {
+					const m2Cell = getCell(mx, y + dy * 2 * color);
+					const m2Piece = getPiece(m2Cell);
+
+					if (!m2Piece) moves.push([mx, my + color]);
+				};
 			};
 
 			// check for diagonal enemy
@@ -109,7 +114,7 @@ function getMoves(piece) {
 			moves.push([mx, my]);
 		}
 	}
-
+	
 	return moves;
 }
 
@@ -219,9 +224,22 @@ const ranks = {
 
 let moveCount = 0;
 
+function resetPiece() {
+	move.piece.style.opacity = 1;
+	move.clone.remove();
+	removeHighlights();
+}
+
 document.addEventListener("mouseup", ({ target }) => {
 	if (move.piece && move.clone) {
 		const cell = target.closest(".cell");
+
+		if (!cell) {
+			resetPiece();
+			
+			return;
+		};
+
 		const piece = getPiece(cell);
 
 		if (cell) {
@@ -230,9 +248,7 @@ document.addEventListener("mouseup", ({ target }) => {
 
 			// reset visuals
 
-			move.piece.style.opacity = 1;
-			move.clone.remove();
-			removeHighlights();
+			resetPiece();
 
 			// verify move
 
@@ -275,7 +291,7 @@ document.addEventListener("mouseup", ({ target }) => {
 					moves: []
 				};
 			} else {
-				// console.log("invalid move");
+				// invalid move
 			}
 		}
 	}
